@@ -1,0 +1,21 @@
+---
+title: "Project"
+author: "Zachary Weinfeld, Gabby Low, Brett Kuwahara, Shea Tennison"
+format: 
+  html:
+    self-contained: true
+    code-tools: true
+    toc: true
+editor: source
+execute: 
+  error: true
+  echo: true
+  message: false
+  warning: false
+---
+
+```{r setup}
+
+life_expectancy <- read.csv("Data/life_expectancy.csv")
+school_years <- read.csv("Data/mean_years_in_school_women_15_to_24_years.csv")
+```
