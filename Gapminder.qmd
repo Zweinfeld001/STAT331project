@@ -1,5 +1,5 @@
 ---
-title: "Project"
+title: "STAT 331 Group Project"
 author: "Zachary Weinfeld, Gabby Low, Brett Kuwahara, Shea Tennison"
 format: 
   html:
@@ -14,8 +14,51 @@ execute:
   warning: false
 ---
 
+### We will analyze the correlation between life expectancy and the mean years 15-24 year old women are in school across different countries.
+
 ```{r setup}
+library(tidyverse)
 
 life_expectancy <- read.csv("Data/life_expectancy.csv")
 school_years <- read.csv("Data/mean_years_in_school_women_15_to_24_years.csv")
 ```
+
+### Data Description
+
+Life expectancy contains data about the expected lifespan of person. This is broken down by country and year, where each observation is a country and each variable is a year. Similarly, school years contains data about the average number of years women from the ages 15 to 24 are in school. Again, this data is broken down by country and year, where each observation is a country and each variable is a year.
+
+### Data Cleaning Process
+
+Fortunately, Gapminder put the data in a very clean format. However, there is much more data available for life expectancy than there is for school years. For life expectancy, data is available for every year from 1800 through 2100 (projection), but for school years, there is only data available for the years 1970 through 2015. For these years, we are fortunate enough to say there is no missing data whatsoever. This makes out data cleaning process relatively simple. Thus, we will focus on only the years 1970 through 2015. Additionally, when the data was read into R, the columns (years) were given a prefix of "X". For example, the column labeled 1970 became X1970. We removed the leading X.
+
+```{r}
+life_expectancy_clean <- life_expectancy |>
+  rename_with(~str_remove(., pattern = "X"), X1970:X2015) |>
+  select(country, `1970`:`2015`)
+
+school_years_clean <- school_years |>
+  rename_with(~str_remove(., pattern = "X"), X1970:X2015)
+```
+
+```{r}
+life_expectancy_long <- life_expectancy_clean |>
+  pivot_longer(cols = `1970`:`2015`,
+               names_to = "year",
+               values_to = "life_expectancy")
+
+school_years_long <- school_years_clean |>
+  pivot_longer(cols = `1970`:`2015`,
+               names_to = "year",
+               values_to = "years_in_school")
+```
+
+```{r}
+joined_data <- life_expectancy_long |>
+  full_join(school_years_long, by=c("country", "year"))
+
+head(joined_data)
+```
+
+### Hypothesized Relationship
+
+We assume there will be a positive correlation between the two variables. A [study](https://news.yale.edu/2020/02/20/want-live-longer-stay-school-study-suggests#:~:text=Each%20educational%20step%20obtained%20led,are%20powerful%2C%E2%80%9D%20Roy%20said.) done by Yale University concluded that, on average, "Each educational step obtained led to 1.37 fewer years of lost life expectancy." We expect our results to be consistent with the Yale study's findings. Additionally, as an educated guess, it seems intuitive that countries with more women in school will have higher life expectancy; this may be due to other lurking variables, however. Both of these variables are likely correlated with the degree to how developed the country is. For example, a more developed country such as the US may have a long life expectancy *and* a high schooling rate in parallel, whereas a less developed country may have both of these values lower in parallel.
