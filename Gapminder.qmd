@@ -61,4 +61,43 @@ head(joined_data)
 
 ### Hypothesized Relationship
 
-We assume there will be a positive correlation between the two variables. A [study](https://news.yale.edu/2020/02/20/want-live-longer-stay-school-study-suggests#:~:text=Each%20educational%20step%20obtained%20led,are%20powerful%2C%E2%80%9D%20Roy%20said.) done by Yale University concluded that, on average, "Each educational step obtained led to 1.37 fewer years of lost life expectancy." We expect our results to be consistent with the Yale study's findings. Additionally, as an educated guess, it seems intuitive that countries with more women in school will have higher life expectancy; this may be due to other lurking variables, however. Both of these variables are likely correlated with the degree to how developed the country is. For example, a more developed country such as the US may have a long life expectancy *and* a high schooling rate in parallel, whereas a less developed country may have both of these values lower in parallel.
+We assume there will be a positive correlation between the two variables. A [study](https://news.yale.edu/2020/02/20/want-live-longer-stay-school-study-suggests#:~:text=Each%20educational%20step%20obtained%20led,are%20powerful%2C%E2%80%9D%20Roy%20said.) done by Yale University concluded that, on average, "Each educational step obtained led to 1.37 fewer years of lost life expectancy." We expect our results to be consistent with the Yale study's findings. Additionally, as an educated guess, it seems intuitive that countries with more women in school will have higher life expectancy; this may be due to other lurking variables, however. Both of these variables are likely correlated with the degree to how developed the country is. For example, a more developed country such as the US may have a long life expectancy *and* a high schooling rate in parallel, whereas a less developed country may have both of these values lower in 
+
+## Linear Regression
+
+```{r}
+# 2.1 DATA VISUALIZATION
+# 1
+
+relationship_plot <- joined_data |>
+  ggplot(aes(x= years_in_school, y = life_expectancy, alpha = 0.15)) + geom_point(color = "darkcyan", show.legend = FALSE) + xlab("Years in school for 15-24 \n year old women") + ylab("Life expectancy") + labs(title = "Life Expectancy and Years in School")
+
+relationship_plot
+
+```
+
+```{r}
+
+rescale_01 <- function(x){
+  stopifnot(is.numeric(x))
+  stopifnot(length(x) > 1)
+  x = (x - min(x, na.rm = TRUE)) / (max(x, na.rm = TRUE) - min(x, na.rm = TRUE))
+}
+
+# 2 
+time_plot <- joined_data |>
+  group_by(year) |>
+  summarize(mean_life = mean(life_expectancy), mean_school = mean(years_in_school, na.rm = TRUE)) |>
+  mutate(std_life = rescale_01(mean_life), std_school = rescale_01(mean_school)) |>
+  ungroup() |>
+  ggplot() + geom_line(aes(x= year, y = std_life, group = 1, color = "darkseagreen")) + geom_line(aes(x= year, y = std_school, group = 1, color = "darkorchid4")) + scale_color_manual(values = c("darkseagreen", "darkorchid4"), labels = c("Life Expectancy (rescaled)", "Years in School \nfor 15-24 y/o Women (rescaled)")) + labs(color = "Rescaled Values", x = "Year", y = "", subtitle = "Rescaled Values", title = "General Life Expectancy and \nYears in School Over Time") + scale_x_discrete(breaks = seq(1970, 2015, 5))
+time_plot
+  
+
+```
+
+## 2.2 Linear Regression
+```{r}
+l
+```
+
