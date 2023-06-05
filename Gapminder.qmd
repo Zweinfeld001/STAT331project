@@ -109,7 +109,6 @@ time_plot
 
 ## 2.2 Linear Regression
 
-
 ```{r}
 #finding the average life expectancy and years in school across each country from 1970 to 2015
 lin_data <- joined_data |>
@@ -129,8 +128,8 @@ intercept <- coef(lin_data_lm)[1]
 slope <- coef(lin_data_lm)[2]
 
 ```
-life_expectancy = `r intercept` + `r slope`x
-x = years in school for 15-24 year old women
+
+life_expectancy = `r intercept` + `r slope`x x = years in school for 15-24 year old women
 
 ```{r}
 resp_var <- var(joined_data$life_expectancy)
@@ -157,3 +156,20 @@ formatted_table |>
 
 ```
 
+### Describing the statistical method (linear regression)
+
+We utilized a linear regression model because there is a linear relationship between the two variables. In addition, each of the observations are independent as the variables in one country do not influence the variables in another country. Lastly, the residuals appear to be normally distributed and have constant variance.  
+
+### Presenting the estimated regression model
+
+predicted_life_expectancy = \`r intercept\` + \`r slope\`(years in school)
+
+### Interpreting the linear regression coefficients
+
+For a given country, for every additional mean year in school for 15-24 year old women, we expect the life expectancy to increase by 2.39 years.
+
+For a country with a mean of zero school years of 15-24 year old women, we expect the life expectancy for that country to be 48.84 years. Note: this is an extrapolation of the model, and thus may not be accurate.
+
+### Describing the fit of the regression model
+
+The $R^{2}$ is 0.685 which means that 68.5% of the mean life expectancy can be explained from our model.
