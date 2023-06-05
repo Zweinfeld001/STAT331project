@@ -17,6 +17,7 @@ execute:
 ### We will analyze the correlation between life expectancy and the mean years 15-24 year old women are in school across different countries.
 
 ```{r setup}
+library(broom)
 library(tidyverse)
 
 life_expectancy <- read.csv("Data/life_expectancy.csv")
@@ -98,6 +99,18 @@ time_plot
 
 ## 2.2 Linear Regression
 ```{r}
-l
+#finding the average life expectancy and years in school across each country from 1970 to 2015
+lin_data <- joined_data |>
+  group_by(country) |>
+  summarize(mean_life = mean(life_expectancy), 
+            mean_school = mean(years_in_school, na.rm = TRUE))
+lin_data
+
+#linear model with mean_school as the explanatory variable and mean_life as the response variable
+lin_data_lm <- lm(mean_life ~ mean_school, data = lin_data)
+summary(lin_data_lm)
+
+#estimated regression equation
+broom::tidy(lin_data_lm)
 ```
 
