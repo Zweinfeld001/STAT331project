@@ -158,7 +158,7 @@ formatted_table |>
 
 ### Describing the statistical method (linear regression)
 
-We utilized a linear regression model because there is a linear relationship between the two variables. In addition, each of the observations are independent as the variables in one country do not influence the variables in another country. Lastly, the residuals appear to be normally distributed and have constant variance.  
+We utilized a linear regression model because there is a linear relationship between the two variables. In addition, each of the observations are independent as the variables in one country do not influence the variables in another country. Lastly, the residuals appear to be normally distributed and have equal variance.  
 
 ### Presenting the estimated regression model
 
