@@ -107,6 +107,7 @@ time_plot
 
 ## 2.2 Linear Regression
 
+
 ```{r}
 #finding the average life expectancy and years in school across each country from 1970 to 2015
 lin_data <- joined_data |>
@@ -118,7 +119,12 @@ lin_data
 #linear model with mean_school as the explanatory variable and mean_life as the response variable
 lin_data_lm <- lm(mean_life ~ mean_school, data = lin_data)
 summary(lin_data_lm)
-
+ 
 #estimated regression equation
 broom::tidy(lin_data_lm)
+
+intercept <- coef(lin_data_lm)[1]
+slope <- coef(lin_data_lm)[2]
 ```
+life_expectancy = `r intercept` + `r slope`x
+x = years in school for 15-24 year old women
