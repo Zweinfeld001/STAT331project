@@ -162,7 +162,7 @@ We utilized a linear regression model because there is a linear relationship bet
 
 ### Presenting the estimated regression model
 
-predicted_life_expectancy = \`r intercept\` + \`r slope\`(years in school)
+predicted_life_expectancy = `r intercept` + `r slope`(years in school)
 
 ### Interpreting the linear regression coefficients
 
