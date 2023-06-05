@@ -19,6 +19,8 @@ execute:
 ```{r setup}
 library(broom)
 library(tidyverse)
+library(knitr)
+library(kableExtra)
 
 life_expectancy <- read.csv("Data/life_expectancy.csv")
 school_years <- read.csv("Data/mean_years_in_school_women_15_to_24_years.csv")
@@ -125,6 +127,33 @@ broom::tidy(lin_data_lm)
 
 intercept <- coef(lin_data_lm)[1]
 slope <- coef(lin_data_lm)[2]
+
 ```
 life_expectancy = `r intercept` + `r slope`x
 x = years in school for 15-24 year old women
+
+```{r}
+resp_var <- var(joined_data$life_expectancy)
+fitted_var <- var(lin_data_lm$fitted.values)
+residual_var <- var(lin_data_lm$residuals)
+
+# Create the table
+table_data <- data.frame(
+  Variance_Type = c("Response Values", "Fitted Values", "Residuals"),
+  Variance = c(resp_var, fitted_var, residual_var)
+)
+
+table_data
+
+formatted_table <- kable(table_data, align = "c", col.names = c("Variance Type", "Variance"))
+
+formatted_table |>
+  kable_paper() |>
+  kable_styling(bootstrap_options = c("striped", "bordered")) |>
+  column_spec(2, color = "cornsilk", background = "coral") |>
+  kable_styling(html_font = "Gill Sans, sans-serif") 
+  
+
+
+```
+
