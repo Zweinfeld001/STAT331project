@@ -75,11 +75,12 @@ We assume there will be a positive correlation between the two variables. A [stu
 relationship_plot <- joined_data |>
   ggplot(aes(x= years_in_school, y = life_expectancy, alpha = 0.15)) + 
   geom_point(color = "darkcyan", show.legend = FALSE) + 
-  labs(x="Years in school for 15-24 \n year old women", y="Life expectancy", title = "Life Expectancy and Years in School")
+  labs(x="Years in School for 15-24\n Year Old Women", y="Life Expectancy", title = "Life Expectancy vs Years in School")
 
 relationship_plot
-
 ```
+
+For the above plot, we choose to include all of the data because, while it is a large amount of data, the general shape of the pattern that the pattern that the data points follow is informative.
 
 ```{r}
 
@@ -103,9 +104,9 @@ time_plot <- joined_data |>
   scale_x_discrete(breaks = seq(1970, 2015, 5))
 
 time_plot
-  
-
 ```
+
+For the above plot, we chose to scale the values between 0 and 1. This is because the range of values for the two different metrics is very different, and thus plotting both of them on top of each other would make it difficult to see the plot. Mean years in school typically instantiates around 2 to 8, while mean life expectancy typically instantiates around 50 to 80. If both were plotted on top of each other without scaling, the resultant plot would make it very difficult to see the line representing mean years in school.
 
 ## 2.2 Linear Regression
 
@@ -118,31 +119,28 @@ lin_data <- joined_data |>
 lin_data
 
 #linear model with mean_school as the explanatory variable and mean_life as the response variable
-lin_data_lm <- lm(mean_life ~ mean_school, data = lin_data)
-summary(lin_data_lm)
+model <- lm(mean_life ~ mean_school, data = lin_data)
  
 #estimated regression equation
-broom::tidy(lin_data_lm)
+broom::tidy(model)
 
-intercept <- coef(lin_data_lm)[1]
-slope <- coef(lin_data_lm)[2]
+intercept <- coef(model)[1]
+slope <- coef(model)[2]
 
 ```
 
-life_expectancy = `r intercept` + `r slope`x x = years in school for 15-24 year old women
+predicted_life_expectancy = `r intercept` + `r slope`(mean years in school)
 
 ```{r}
 resp_var <- var(joined_data$life_expectancy)
-fitted_var <- var(lin_data_lm$fitted.values)
-residual_var <- var(lin_data_lm$residuals)
+fitted_var <- var(model$fitted.values)
+residual_var <- var(model$residuals)
 
 # Create the table
 table_data <- data.frame(
   Variance_Type = c("Response Values", "Fitted Values", "Residuals"),
   Variance = c(resp_var, fitted_var, residual_var)
 )
-
-table_data
 
 formatted_table <- kable(table_data, align = "c", col.names = c("Variance Type", "Variance"))
 
@@ -158,11 +156,11 @@ formatted_table |>
 
 ### Describing the statistical method (linear regression)
 
-We utilized a linear regression model because there is a linear relationship between the two variables. In addition, each of the observations are independent as the variables in one country do not influence the variables in another country. Lastly, the residuals appear to be normally distributed and have equal variance.  
+We utilized a linear regression model because there is a linear relationship between the two variables. In addition, each of the observations are independent as the variables in one country do not influence the variables in another country. Lastly, the residuals appear to be normally distributed and have equal variance.
 
 ### Presenting the estimated regression model
 
-predicted_life_expectancy = `r intercept` + `r slope`(years in school)
+predicted_life_expectancy = `r intercept` + `r slope`(mean years in school)
 
 ### Interpreting the linear regression coefficients
 
