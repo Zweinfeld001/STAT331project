@@ -68,9 +68,9 @@ We assume there will be a positive correlation between the two variables. A [stu
 
 ## Linear Regression
 
+### Data Visualization and Relationship
+
 ```{r}
-# 2.1 DATA VISUALIZATION
-# 1
 
 relationship_plot <- joined_data |>
   ggplot(aes(x= years_in_school, y = life_expectancy, alpha = 0.15)) + 
@@ -81,6 +81,8 @@ relationship_plot
 ```
 
 For the above plot, we choose to include all of the data because, while it is a large amount of data, the general shape of the pattern that the pattern that the data points follow is informative.
+
+### Change in Variables over Time
 
 ```{r}
 
@@ -111,22 +113,20 @@ For the above plot, we chose to scale the values between 0 and 1. This is becaus
 ## 2.2 Linear Regression
 
 ```{r}
-#finding the average life expectancy and years in school across each country from 1970 to 2015
+# finding the average life expectancy and years in school across each country from 1970 to 2015
 lin_data <- joined_data |>
   group_by(country) |>
   summarize(mean_life = mean(life_expectancy), 
             mean_school = mean(years_in_school, na.rm = TRUE))
-lin_data
 
-#linear model with mean_school as the explanatory variable and mean_life as the response variable
+# linear model with mean_school as the explanatory variable and mean_life as the response variable
 model <- lm(mean_life ~ mean_school, data = lin_data)
- 
-#estimated regression equation
-broom::tidy(model)
 
 intercept <- coef(model)[1]
 slope <- coef(model)[2]
-
+ 
+# estimated regression equation
+broom::tidy(model)
 ```
 
 predicted_life_expectancy = `r intercept` + `r slope`(mean years in school)
