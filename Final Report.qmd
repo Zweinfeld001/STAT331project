@@ -1,6 +1,6 @@
 ---
 title: "Analyzing the Relationship Between Mean Years of Women in Higher Education with Life Expectancy"
-author: "Zachary Weinfeld, Gabby Low, Brett Kuwahara, Shea Tennison"
+authors: "Zachary Weinfeld, Gabby Low, Brett Kuwahara, Shea Tennison"
 format: 
   html:
     self-contained: true
@@ -14,9 +14,7 @@ execute:
   warning: false
 ---
 
-### We will analyze the correlation between life expectancy and the mean years 15-24 year old women are in school across different countries.
-
-Note: throughout this article, we will refer to "mean years of 15-24 year old women in school" as simply "mean years in school"
+**Research Question: We will analyze the correlation between life expectancy and the mean years 15-24 year old women are in school across different countries.**
 
 ```{r setup}
 library(broom)
@@ -33,6 +31,8 @@ set.seed(27)
 ### Data Description
 
 Life expectancy contains data about the expected lifespan of person. This is broken down by country and year, where each observation is a country and each variable is a year. Similarly, school years contains data about the average number of years women from the ages 15 to 24 are in school. Again, this data is broken down by country and year, where each observation is a country and each variable is a year.
+
+Note: throughout this article, we will refer to "mean years of 15-24 year old women in school" as simply "mean years in school."
 
 ### Data Cleaning Process
 
@@ -74,11 +74,11 @@ We assume there will be a positive correlation between the two variables. A [stu
 ## Observable Relationship Between the Variables
 
 ```{r}
-
 relationship_plot <- joined_data |>
   ggplot(aes(x= years_in_school, y = life_expectancy, alpha = 0.15)) + 
   geom_point(color = "darkcyan", show.legend = FALSE) + 
-  labs(x="Mean Years in School", y="Life Expectancy", title = "Life Expectancy vs Years in School")
+  labs(x="Mean Years in School", y="Life Expectancy", title = "Life Expectancy vs Years in School") +
+  theme_minimal()
 
 relationship_plot
 ```
@@ -87,7 +87,7 @@ For the above plot, we choose to include all of the data (except for the 7 count
 
 ## Change in Variables over Time
 
-We will examine the average value of each metric for a given year across all countries in the data set.
+We will examine the average value of each metric for a given year across all countries in the dataset.
 
 ```{r}
 rescale_01 <- function(x){
@@ -95,7 +95,6 @@ rescale_01 <- function(x){
   x = (x - min(x, na.rm = TRUE)) / (max(x, na.rm = TRUE) - min(x, na.rm = TRUE))
 }
 
-# 2 
 time_plot <- joined_data |>
   group_by(year) |>
   summarize(mean_life = mean(life_expectancy), 
@@ -105,9 +104,10 @@ time_plot <- joined_data |>
   ggplot() + 
   geom_line(aes(x= year, y = std_life, group = 1, color = "darkseagreen")) + 
   geom_line(aes(x= year, y = std_school, group = 1, color = "darkorchid4")) + 
-  scale_color_manual(values = c("darkseagreen", "darkorchid4"), labels = c("Life Expectancy (rescaled)", "Years in School \nfor 15-24 y/o Women (rescaled)")) + 
+  scale_color_manual(values = c("darkseagreen", "darkorchid4"), labels = c("Life Expectancy (rescaled)", "Mean Years in School (rescaled)")) + 
   labs(color = "Rescaled Values", x = "Year", y = "", subtitle = "Rescaled Values", title = "General Life Expectancy and \nYears in School Over Time") + 
-  scale_x_discrete(breaks = seq(1970, 2015, 5))
+  scale_x_discrete(breaks = seq(1970, 2015, 5)) +
+  theme_minimal()
 
 time_plot
 ```
@@ -117,26 +117,33 @@ For the above plot, we chose to scale the values between 0 and 1. This is becaus
 Before we dive into linear regression, lets look into the relationship between the *mean* life expectancy and *mean* years in school, averaged across the years 1970 through 2015 for each country.
 
 ```{r}
-actual <- lin_data |>
-  ggplot(aes(x=mean_school, y=mean_life)) +
-  geom_point() +
-  labs(x="Mean Years in School", y="Mean Life Expectancy", title="Mean Years in School vs Mean Life Expectancy")
-
-actual
-```
-
-
-# Linear Regression
-
-We utilized a linear regression model because there is a linear relationship between the two variables. In addition, each of the observations are independent as the variables in one country do not influence the variables in another country. Lastly, the residuals appear to be normally distributed and have equal variance.
-
-```{r}
 # finding the average life expectancy and years in school across each country from 1970 to 2015
 lin_data <- joined_data |>
   group_by(country) |>
   summarize(mean_life = mean(life_expectancy), 
             mean_school = mean(years_in_school, na.rm = TRUE))
 
+# Plot the data
+actual <- lin_data |>
+  ggplot(aes(x=mean_school, y=mean_life)) +
+  geom_point() +
+  labs(x="Mean Years in School", y="Mean Life Expectancy", title="Mean Years in School vs Mean Life Expectancy") +
+  theme_minimal()
+
+actual
+```
+
+# Linear Regression
+
+We utilized a linear regression model because there is a linear relationship between the two variables.
+
+### Conditions for Linear Regression
+
+In order for a linear regression model to be appropriate on a dataset, some conitions must be met. There must be an approximately linear relationship between the variables of interest, the observations must be independent, the residuals must be normally distributes, and the residuals must have equal variance. In this dataset, there is an approximately linear relationship between mean years in school and mean life expectancy. Each of the observations are independent as the variables in one country do not influence the variables in another country. Lastly, the residuals appear to be normally distributed and have equal variance. Therefore, it is appropriate to apply a linear model to our dataset.
+
+Presented below are the summary statistics of the linear model:
+
+```{r}
 # linear model with mean_school as the explanatory variable and mean_life as the response variable
 model <- lm(mean_life ~ mean_school, data = lin_data)
 
@@ -149,7 +156,7 @@ broom::tidy(model)
 
 ### Presenting the estimated regression model
 
-predicted_life_expectancy = `r intercept` + `r slope`(mean years in school)
+predicted_life_expectancy = `r round(intercept, digits=2)` + `r round(slope, digits=2)`(mean years in school)
 
 ### Interpreting the linear regression coefficients
 
@@ -162,7 +169,9 @@ For a country with a mean of zero school years of 15-24 year old women, we expec
 The $R^{2}$ is 0.685 which means that 68.5% of the mean life expectancy can be explained from our model.
 
 ### Variance Across our Response, Fitted, and Residual Values
-We calcualted our variances for the response, fitted, and residual values to analyze how well our linear model fits the data. A lower variance in fitted values indicate a better model. 
+
+We calculated our variances for the response, fitted, and residual values to analyze how well our linear model fits the data. A lower variance in fitted values indicate a better model.
+
 ```{r}
 resp_var <- var(joined_data$life_expectancy)
 fitted_var <- var(model$fitted.values)
@@ -182,9 +191,12 @@ formatted_table |>
   column_spec(2, color = "cornsilk", background = "coral") |>
   kable_styling(html_font = "Gill Sans, sans-serif") 
 ```
+
 The above table shows that the variance in our fitted values is larger than our variance in our residuals. This means that more of the variation is explained by our model than unexplained variation. The response values variation is the total variation in mean life expectancy, without regarding mean years in school.
 
 # Predictions
+
+Let's compare the actual life expectancies for each country with the predicted values.
 
 ```{r}
 noise <- function(x, mean=0, sd){
@@ -198,16 +210,52 @@ predicted <- lin_data |>
 ) |>
   ggplot(aes(x=mean_school, y=preds)) +
   geom_point() +
-  labs(x="Mean Years in School", y="Predicted Mean Life Expectancy", title="Years in School vs Predicted Life Expectancy") +
+  labs(x="Mean Years in School", y="", title="Predicted", subtitle="Mean Life Expectancy") +
   scale_y_continuous(limits=c(40, 85))
 
-actual <- actual + scale_y_continuous(limits=c(40, 85))
+actual <- actual + scale_y_continuous(limits=c(40, 85)) + labs(title="Actual", subtitle="Mean Life Expectancy", y="")
 
-grid.arrange(actual, predicted, ncol = 2)
+grid.arrange(actual, predicted, ncol = 2) +
+  theme_minimal()
 ```
 
 In the plots above, the graph of predicted mean life expectancy appears similar to true mean life expectancy. Both plots indicate that there is a positive strong association between Actual or Predicted Life Expectancy with Mean Years in School.
 
 # Simulation
 
-We were interested in seeing how our model performs over many different data sets. Thus, we simulated 1000 data sets
+We were interested in seeing how our model performs over many different datasets. We will do this by performing predictive checks. This is an important statistical concept, since our data only instantiates one of billions of possible abstractions. Thus, we simulated 1000 realistic datasets based on the fitted model above.
+
+For each generated dataset, we fit a linear regression model to it and calculated the $R^2$ value.
+
+```{r}
+nsims <- 1000
+sims <- map_dfc(.x = 1:nsims,
+                 .f = ~tibble(sim = noise(predict(model), 0, 
+                                          sigma(model))
+                              ))
+
+colnames(sims) <- colnames(sims) |>
+  str_replace(pattern = "\\.\\.\\.",
+              replace = "_")
+
+sims <- lin_data |>
+  select(mean_life) |>
+  bind_cols(sims)
+
+sim_r_sq <- sims |>
+  map(~ lm(mean_life ~ .x, data = sims)) |>
+  map(glance) |>
+  map_dbl(~ .x$r.squared)
+
+sim_r_sq <- sim_r_sq[names(sim_r_sq) != "mean_life"]
+
+tibble(sims = sim_r_sq) |>
+  ggplot(aes(x=sims)) +
+  geom_histogram(binwidth = 0.01) +
+  labs(x= expression("Simulated"~R^2),
+       y="",
+       subtitle="Number of Simulated Models") +
+  theme_minimal()
+```
+
+The above histogram shows the $R^{2}$ values for the 1000 simulations. This follows an approximately normal distribution.
