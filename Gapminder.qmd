@@ -21,9 +21,11 @@ library(broom)
 library(tidyverse)
 library(knitr)
 library(kableExtra)
+library(gridExtra)
 
 life_expectancy <- read.csv("Data/life_expectancy.csv")
 school_years <- read.csv("Data/mean_years_in_school_women_15_to_24_years.csv")
+set.seed(27)
 ```
 
 ### Data Description
@@ -57,9 +59,8 @@ school_years_long <- school_years_clean |>
 
 ```{r}
 joined_data <- life_expectancy_long |>
-  full_join(school_years_long, by=c("country", "year"))
-
-head(joined_data)
+  full_join(school_years_long, by=c("country", "year")) |>
+  drop_na()
 ```
 
 ### Hypothesized Relationship
@@ -108,6 +109,8 @@ time_plot <- joined_data |>
 time_plot
 ```
 
+In the above plot, we took the average value of each metric for a given year across all countries in the data set.
+
 For the above plot, we chose to scale the values between 0 and 1. This is because the range of values for the two different metrics is very different, and thus plotting both of them on top of each other would make it difficult to see the plot. Mean years in school typically instantiates around 2 to 8, while mean life expectancy typically instantiates around 50 to 80. If both were plotted on top of each other without scaling, the resultant plot would make it very difficult to see the line representing mean years in school.
 
 ## 2.2 Linear Regression
@@ -127,6 +130,15 @@ slope <- coef(model)[2]
  
 # estimated regression equation
 broom::tidy(model)
+```
+
+```{r}
+actual <- lin_data |>
+  ggplot(aes(x=mean_school, y=mean_life)) +
+  geom_point() +
+  labs(x="Mean Years in School", y="Mean Life Expectancy", title="Years in School vs Life Expectancy")
+
+actual
 ```
 
 predicted_life_expectancy = `r intercept` + `r slope`(mean years in school)
@@ -149,10 +161,9 @@ formatted_table |>
   kable_styling(bootstrap_options = c("striped", "bordered")) |>
   column_spec(2, color = "cornsilk", background = "coral") |>
   kable_styling(html_font = "Gill Sans, sans-serif") 
-  
-
-
 ```
+
+The above table shows that the variance in our fitted values is larger than our variance in our residuals. This means that more of the variation is explained by our model than unexplained variation. The response values variation is the total variation in mean life expectancy, without regarding mean years in school.
 
 ### Describing the statistical method (linear regression)
 
@@ -171,3 +182,69 @@ For a country with a mean of zero school years of 15-24 year old women, we expec
 ### Describing the fit of the regression model
 
 The $R^{2}$ is 0.685 which means that 68.5% of the mean life expectancy can be explained from our model.
+
+# Predictions
+
+```{r}
+noise <- function(x, mean=0, sd){
+  x + rnorm(length(x),
+            mean,
+            sd)
+}
+
+predicted <- lin_data |>
+  mutate(preds = noise(predict(model), 0, sigma(model))
+) |>
+  ggplot(aes(x=mean_school, y=preds)) +
+  geom_point() +
+  labs(x="Mean Years in School", y="Predicted Mean Life Expectancy", title="Years in School vs Predicted Life Expectancy")
+
+predicted
+```
+
+```{r}
+grid.arrange(actual, predicted, ncol = 2)
+```
+
+In the plots above, the graph of predicted mean life expectancy appears similar to true mean life expectancy. However, we notice that the plotted points in our Predicted Life Expectancy vs. Mean Years in School are closer together than our Actual Life Expectancy vs. Mean Years in school, indicating that there may be a stronger correlation between the two variables in our predicted plot. Both plots indicate that there is a positive strong association between Actual or Predicted Life Expectancy with Mean Years in School.
+
+```{r}
+nsims <- 1000
+sims <- map_dfc(.x = 1:nsims,
+                 .f = ~tibble(sim = noise(predict(model), 0, 
+                                          sigma(model))
+                              ))
+
+head(sims)
+```
+
+```{r}
+colnames(sims) <- colnames(sims) |>
+  str_replace(pattern = "\\.\\.\\.",
+              replace = "_")
+```
+
+```{r}
+sims <- lin_data |>
+  select(mean_life) |>
+  bind_cols(sims)
+```
+
+```{r}
+sim_r_sq <- sims |>
+  map(~ lm(mean_life ~ .x, data = sims)) |>
+  map(glance) |>
+  map_dbl(~ .x$r.squared)
+
+sim_r_sq <- sim_r_sq[names(sim_r_sq) != "mean_life"]
+```
+
+```{r}
+tibble(sims = sim_r_sq) |>
+  ggplot(aes(x=sims)) +
+  geom_histogram(binwidth = 0.01) +
+  labs(x= expression("Simulated"~R^2),
+       y="",
+       subtitle="Number of Simulated Models") +
+  theme_minimal()
+```
