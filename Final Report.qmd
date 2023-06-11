@@ -129,7 +129,7 @@ time_plot <- joined_data |>
   geom_line(aes(x= year, y = std_life, group = 1, color = "darkseagreen")) + 
   geom_line(aes(x= year, y = std_school, group = 1, color = "darkorchid4")) + 
   scale_color_manual(values = c("darkseagreen", "darkorchid4"), labels = c("Life Expectancy (rescaled)", "Mean Years in School (rescaled)")) + 
-  scale_x_discrete(breaks = seq(1970, 2015, 5)) +
+  scale_x_continuous(breaks = seq(1970, 2015, 5), labels = seq(1970, 2015, 5)) +
   theme_minimal() +
   transition_reveal(year) +
   labs(color = "Rescaled Values", x = "Year", y = "", subtitle = "Rescaled Values", title = "Life Expectancy and Years in School Over Time")

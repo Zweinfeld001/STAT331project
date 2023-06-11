@@ -13,6 +13,7 @@ execute:
   message: false
   warning: false
 ---
+
 # 1. Project Proposal + Data
 
 ### We will analyze the correlation between life expectancy and the mean years 15-24 year old women are in school across different countries.
