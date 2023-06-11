@@ -130,7 +130,10 @@ intercept <- coef(model)[1]
 slope <- coef(model)[2]
  
 # estimated regression equation
-broom::tidy(model)
+broom::tidy(model) |>
+  knitr::kable() |>
+  kableExtra::kable_styling(font_size = 20) |>
+  kable_styling(html_font = "Gill Sans, sans-serif") 
 ```
 
 ```{r}
@@ -220,7 +223,6 @@ sims <- map_dfc(.x = 1:nsims,
                                           sigma(model))
                               ))
 
-head(sims)
 ```
 
 ```{r}
