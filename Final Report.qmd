@@ -150,8 +150,8 @@ lin_data <- joined_data |>
 
 # Plot the data
 actual <- lin_data |>
-  ggplot(aes(x=mean_school, y=mean_life, color="darkseagreen")) +
-  geom_point() +
+  ggplot(aes(x=mean_school, y=mean_life)) +
+  geom_point(color="darkseagreen") +
   labs(x="Mean Years in School", y="Mean Life Expectancy", title="Mean Years in School vs Mean Life Expectancy") +
   guides(color="none") +
   theme_minimal()
@@ -187,9 +187,10 @@ tidy_table[2, "term"] <- "Mean School Years"
 tidy_table |>
   kable("html", escape = FALSE, booktabs=TRUE) |>
     kable_styling(full_width = FALSE, stripe_color = "lightgray", font_size=20) |>
-    row_spec(0, bold = TRUE) |>
+    row_spec(0, bold = TRUE, color = "darkorchid4") |>
     column_spec(1, bold = TRUE) |>
-    column_spec(2:3, extra_css = "text-align: center;")
+    column_spec(2:3, extra_css = "text-align: center;") |>
+    column_spec(1:5, color = "darkorchid4")
 ```
 
 ## Linear Regression Equation
@@ -234,7 +235,7 @@ formatted_table <- kable(table_data, align = "c", col.names = c("Variance Type",
 formatted_table |>
   kable_paper() |>
   kable_styling(bootstrap_options = c("striped", "bordered")) |>
-  column_spec(2, color = "cornsilk", background = "tan") |>
+  column_spec(2, color = "cornsilk", background = "darkseagreen") |>
   kable_styling(html_font = "Gill Sans, sans-serif")
 ```
 
@@ -256,8 +257,8 @@ noise <- function(x, mean=0, sd){
 predicted <- lin_data |>
   mutate(preds = noise(predict(model), 0, sigma(model))
 ) |>
-  ggplot(aes(x=mean_school, y=preds, color="darkseagreen")) +
-  geom_point() +
+  ggplot(aes(x=mean_school, y=preds)) +
+  geom_point(color="darkseagreen") +
   labs(x="Mean Years in School", y="", title="Predicted", subtitle="Mean Life Expectancy") +
   guides(color="none") +
   ylim(limits=c(40, 85))
@@ -301,8 +302,8 @@ sim_r_sq <- sims |>
 sim_r_sq <- sim_r_sq[names(sim_r_sq) != "mean_life"]
 
 tibble(sims = sim_r_sq) |>
-  ggplot(aes(x=sims, color="darkseagreen")) +
-  geom_histogram(binwidth = 0.01) +
+  ggplot(aes(x=sims)) +
+  geom_histogram(binwidth = 0.01, fill="darkseagreen") +
   labs(x=expression("Simulated"~R^2),
        y="",
        subtitle="Number of Simulated Models") +
