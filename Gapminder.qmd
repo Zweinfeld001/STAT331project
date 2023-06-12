@@ -257,3 +257,9 @@ tibble(sims = sim_r_sq) |>
        subtitle="Number of Simulated Models") +
   theme_minimal()
 ```
+
+R^2 is the percentage of the dependent variable variation that a linear model explains(statisticsbyjim). Our simulated R^2 mean is 0.4679 which means that the model can explain 46.79% of the variation in the response variable around its mean. The distributions tend to be right skewed which means that more of the data falls to the left side of the mean than the right side of the mean. In essence, the majority of the simulated models are less than our simulated R^2 mean of 0.4679. Nevertheless, regression models with low R^2 values are not a problem and can still be perfectly good models for several reasons. For instance, "studies that attempt to explain human behavior generally have R^2 values less than 50% due to an inherent amount of unexplainable variation"(statisticsbyjim). Unlike physical processes, people are more challenging to predict. In addition, even when there is a low R^2 value, but the independent variable is statistically significant, we are still able to draw important conclusions about the relationships between the variables(statisticsbyjim). Our independent variable, mean_school (mean years in school), has a p-value of 0, which means it is statistically significant. Therefore, even though our R^2 value is considered to be lower, the relationship between mean years in school and mean life expectancy is still significant.
+
+# References
+https://news.yale.edu/2020/02/20/want-live-longer-stay-school-study-suggests#:~:text=Each%20educational%20step%20obtained%20led,are%20powerful%2C%E2%80%9D%20Roy%20said.
+https://statisticsbyjim.com/regression/interpret-r-squared-regression/
