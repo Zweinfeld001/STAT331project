@@ -53,7 +53,7 @@ Note: throughout this article, we will refer to "mean years of 15-24 year old wo
 
 ### Data Cleaning Process
 
-Fortunately, Gapminder put the data in a very clean format. However, there is much more data available for life expectancy than there is for school years. For life expectancy, data is available for every year from 1800 through 2100 (projection), but for school years, there is only data available for the years 1970 through 2015. For these years, there are 7 countries with missing values. We made the decision to remove these countries from our analysis. For the remaining 188 countries with data present, we will focus on only the years 1970 through 2015.
+Fortunately, Gapminder put the data in a very clean format. However, there is much more data available for life expectancy than there is for school years. For life expectancy, data is available for every year from 1800 through 2100 (projection), but for school years, there is only data available for the years 1970 through 2015. For these years, there are 7 countries with missing values, and we made the decision to remove these countries from our analysis. For the remaining 188 countries with data present, we will focus on only the years 1970 through 2015.
 
 ```{r}
 life_expectancy_clean <- life_expectancy |>
@@ -98,7 +98,7 @@ We will first crudely examine the obvious visual patterns present in the data.
 ```{r}
 relationship_plot <- joined_data |>
   ggplot(aes(x = years_in_school, y = life_expectancy, alpha = 0.15)) + 
-  geom_point(color = "darkcyan", show.legend = FALSE) + 
+  geom_point(color = "darkseagreen", show.legend = FALSE) + 
   theme_minimal() +
   transition_time(year) +
   labs(x = "Mean Years in School", y = "Life Expectancy", title = "Life Expectancy vs Years in School", subtitle="Year: {frame_time}") +
@@ -139,7 +139,7 @@ time_plot
 
 For the above plot, we chose to scale the values between 0 and 1. This is because the range of values for the two different metrics is very different, and thus plotting both of them on top of each other would make it difficult to see the plot. Mean years in school typically instantiates around 2 to 8, while mean life expectancy typically instantiates around 50 to 80. If both were plotted on top of each other without scaling, the resultant plot would make it very difficult to see the line representing mean years in school.
 
-Before we dive into linear regression, lets look into the relationship between the *mean* life expectancy and *mean* years in school, averaged across the years 1970 through 2015 for each country.
+Before we dive into linear regression, lets look into the relationship between the *mean* life expectancy per country and *mean* years in school per country, averaged across the years 1970 through 2015 for each individual country.
 
 ```{r}
 # finding the average life expectancy and years in school across each country from 1970 to 2015
@@ -150,9 +150,10 @@ lin_data <- joined_data |>
 
 # Plot the data
 actual <- lin_data |>
-  ggplot(aes(x=mean_school, y=mean_life)) +
+  ggplot(aes(x=mean_school, y=mean_life, color="darkseagreen")) +
   geom_point() +
   labs(x="Mean Years in School", y="Mean Life Expectancy", title="Mean Years in School vs Mean Life Expectancy") +
+  guides(color="none") +
   theme_minimal()
 
 actual
@@ -203,13 +204,13 @@ $$
 -   $\hat{y}=predicted\ life\ expectancy$
 -   $x=mean\ years\ in\ school$
 
-### Interpreting the linear regression coefficients
+### Interpreting the Linear Regression Coefficients
 
 For a given country, for every additional mean year in school for 15-24 year old women, we expect the life expectancy to increase by 2.39 years.
 
 For a country with a mean of zero school years of 15-24 year old women, we expect the life expectancy for that country to be 48.84 years. Note: this is an extrapolation of the model, and thus may not be accurate.
 
-### Describing the fit of the regression model
+### Describing the Fit of the Regression Model
 
 The $R^{2}$ is 0.685 which means that 68.5% of the mean life expectancy can be explained from our model.
 
@@ -233,11 +234,11 @@ formatted_table <- kable(table_data, align = "c", col.names = c("Variance Type",
 formatted_table |>
   kable_paper() |>
   kable_styling(bootstrap_options = c("striped", "bordered")) |>
-  column_spec(2, color = "cornsilk", background = "coral") |>
-  kable_styling(html_font = "Gill Sans, sans-serif") 
+  column_spec(2, color = "cornsilk", background = "tan") |>
+  kable_styling(html_font = "Gill Sans, sans-serif")
 ```
 
-The above table shows that the variance in our fitted values is larger than our variance in our residuals. This means that more of the variation is explained by our model than unexplained variation. The response values variation is the total variation in mean life expectancy, without regarding mean years in school.
+The above table shows that the variance in our fitted values is larger than our variance in our residuals. This indicates that our model explains a larger portion of the variation in the data compared to the unexplained variation. The response values variation is the total variation in mean life expectancy, without regarding mean years in school.
 
 ------------------------------------------------------------------------
 
@@ -255,12 +256,13 @@ noise <- function(x, mean=0, sd){
 predicted <- lin_data |>
   mutate(preds = noise(predict(model), 0, sigma(model))
 ) |>
-  ggplot(aes(x=mean_school, y=preds)) +
+  ggplot(aes(x=mean_school, y=preds, color="darkseagreen")) +
   geom_point() +
   labs(x="Mean Years in School", y="", title="Predicted", subtitle="Mean Life Expectancy") +
-  scale_y_continuous(limits=c(40, 85))
+  guides(color="none") +
+  ylim(limits=c(40, 85))
 
-actual <- actual + scale_y_continuous(limits=c(40, 85)) + labs(title="Actual", subtitle="Mean Life Expectancy", y="")
+actual <- actual + ylim(limits=c(40, 85)) + labs(title="Actual", subtitle="Mean Life Expectancy", y="")
 
 grid.arrange(actual, predicted, ncol = 2) +
   theme_minimal()
@@ -299,12 +301,28 @@ sim_r_sq <- sims |>
 sim_r_sq <- sim_r_sq[names(sim_r_sq) != "mean_life"]
 
 tibble(sims = sim_r_sq) |>
-  ggplot(aes(x=sims)) +
+  ggplot(aes(x=sims, color="darkseagreen")) +
   geom_histogram(binwidth = 0.01) +
-  labs(x= expression("Simulated"~R^2),
+  labs(x=expression("Simulated"~R^2),
        y="",
        subtitle="Number of Simulated Models") +
+  guides(color="none") +
   theme_minimal()
 ```
 
 The above histogram shows the $R^{2}$ values for the 1000 simulations. This follows an approximately normal distribution.
+
+## Analysis of $R^{2}$ Distribution
+
+$R^{2}$ is the percentage of the dependent variable variation that a linear model explains (statisticsbyjim). Our simulated $R^{2}$ mean is 0.4679 which means that the model can explain 46.79% of the variation in the response variable around its mean. The distributions tend to be right skewed which means that more of the data falls to the left side of the mean than the right side of the mean. In essence, the majority of the simulated models are less than our simulated $R^{2}$ mean of 0.4679. Nevertheless, regression models with low $R^{2}$ values are not a problem and can still be perfectly good models for several reasons. For instance, "studies that attempt to explain human behavior generally have $R^{2}$ values less than 50% due to an inherent amount of unexplainable variation"(statisticsbyjim). Unlike physical processes, people are more challenging to predict. In addition, even when there is a low $R^{2}$ value, but the independent variable is statistically significant, we are still able to draw important conclusions about the relationships between the variables (statisticsbyjim). Our independent variable, mean_school (mean years in school), has a p-value of 0, which means it is statistically significant. Therefore, even though our $R^{2}$ value is considered to be lower, the relationship between mean years in school and mean life expectancy is still significant.
+
+# Conclusion
+
+From our original dataset, we fit a linear model with the explanatory variable "mean years in school" and the response variable "life expectancy." This model had an $R^{2}$ value of 0.685. From this, we can infer that while our model is a somewhat okay predictor, there is lots of variation in the response variable that can't be explained by the model. There is some degree of correlation between the two variables. However, since this was an observational study and not an experiment, we cannot conclude a causal relationship between the two variables. Further investigation beyond the scope of this paper would need to be done to determine if a causal relationship exists between the two variables.
+
+# References
+
+1.  Yale University News:
+    "Want to Live Longer? Stay in School, Study Suggests." Yale News, 20 Feb. 2020, [**https://news.yale.edu/2020/02/20/want-live-longer-stay-school-study-suggests**](https://news.yale.edu/2020/02/20/want-live-longer-stay-school-study-suggests).
+
+2.  Jim Frost. "How to Interpret the R-squared Value in Regression." Statistics By Jim, [**https://statisticsbyjim.com/regression/interpret-r-squared-regression/**](https://statisticsbyjim.com/regression/interpret-r-squared-regression/).
