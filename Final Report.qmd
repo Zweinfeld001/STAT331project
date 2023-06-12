@@ -261,7 +261,7 @@ predicted <- lin_data |>
   geom_point(color="darkseagreen") +
   labs(x="Mean Years in School", y="", title="Predicted", subtitle="Mean Life Expectancy") +
   guides(color="none") +
-  ylim(limits=c(40, 85))
+  ylim(limits=c(40, 85)) + theme_minimal()
 
 actual <- actual + ylim(limits=c(40, 85)) + labs(title="Actual", subtitle="Mean Life Expectancy", y="")
 
