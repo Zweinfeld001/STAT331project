@@ -307,7 +307,7 @@ sim_r_sq <- sim_r_sq[names(sim_r_sq) != "mean_life"]
 
 tibble(sims = sim_r_sq) |>
   ggplot(aes(x=sims)) +
-  geom_histogram(binwidth = 0.01, fill="darkseagreen") +
+  geom_histogram(binwidth = 0.01, fill="darkseagreen", color = "darkorchid4") +
   labs(x=expression("Simulated"~R^2),
        y="",
        subtitle="Number of Simulated Models") +
