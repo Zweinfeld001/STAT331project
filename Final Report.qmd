@@ -35,7 +35,7 @@ set.seed(27)
 
 ### Data Description
 
-Life expectancy contains data about the expected lifespan of person. This is broken down by country and year, where each observation is a country and each variable is a year. Similarly, school years contains data about the average number of years women from the ages 15 to 24 are in school. Again, this data is broken down by country and year, where each observation is a country and each variable is a year.
+Life expectancy contains data about the expected lifespan of person. This is broken down by country and year, where each observation is a country and each variable is a year. Similarly, school years contains data about the average number of years women from the ages 15 to 24 are in school. This data is also broken down by country and year, where each observation is a country and each variable is a year.
 
 Our data is obtained from Gapminder. Here is how Gapminder collects data:
 
@@ -85,7 +85,7 @@ joined_data <- life_expectancy_long |>
 
 ### Hypothesized Relationship
 
-We assume there will be a positive correlation between the two variables. A [study](https://news.yale.edu/2020/02/20/want-live-longer-stay-school-study-suggests#:~:text=Each%20educational%20step%20obtained%20led,are%20powerful%2C%E2%80%9D%20Roy%20said.) done by Yale University concluded that, on average, "Each educational step obtained led to 1.37 fewer years of lost life expectancy." We expect our results to be consistent with the Yale study's findings. Additionally, as an educated guess, it seems intuitive that countries with more women in school will have higher life expectancy; this may be due to other lurking variables, however. Both of these variables are likely correlated with the degree to how developed the country is. For example, a more developed country such as the US may have a long life expectancy *and* a high schooling rate in parallel, whereas a less developed country may have both of these values lower in
+We assume there will be a positive correlation between the two variables. A [study](https://news.yale.edu/2020/02/20/want-live-longer-stay-school-study-suggests#:~:text=Each%20educational%20step%20obtained%20led,are%20powerful%2C%E2%80%9D%20Roy%20said.) done by Yale University concluded that, on average, "Each educational step obtained led to 1.37 fewer years of lost life expectancy." We expect our results to be consistent with the Yale study's findings. Additionally, as an educated guess, it seems intuitive that countries with more women in school will have higher life expectancy; this may be due to other lurking variables, however. Both of these variables are likely correlated with the degree to how developed the country is. For example, a more developed country such as the US may have a long life expectancy *and* a high schooling rate in parallel, whereas a less developed country may have both of these values lower.
 
 ------------------------------------------------------------------------
 
@@ -137,7 +137,7 @@ time_plot <- joined_data |>
 time_plot
 ```
 
-For the above plot, we chose to scale the values between 0 and 1. This is because the range of values for the two different metrics is very different, and thus plotting both of them on top of each other would make it difficult to see the plot. Mean years in school typically instantiates around 2 to 8, while mean life expectancy typically instantiates around 50 to 80. If both were plotted on top of each other without scaling, the resultant plot would make it very difficult to see the line representing mean years in school.
+For the above plot, we chose to scale the values between 0 and 1. This is because the range of values for the two different metrics is very different. Mean years in school typically instantiates around 2 to 12, while mean life expectancy typically instantiates around 50 to 80. If both were plotted on top of each other without scaling, it would be very difficult to see the line representing mean years in school in the resultant plot.
 
 Before we dive into linear regression, lets look into the relationship between the *mean* life expectancy per country and *mean* years in school per country, averaged across the years 1970 through 2015 for each individual country.
 
