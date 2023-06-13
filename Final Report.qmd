@@ -235,7 +235,11 @@ formatted_table <- kable(table_data, align = "c", col.names = c("Variance Type",
 formatted_table |>
   kable_paper() |>
   kable_styling(bootstrap_options = c("striped", "bordered")) |>
+<<<<<<< HEAD
   column_spec(2, color = "white", background = "darkseagreen") |>
+=======
+  column_spec(2, color = "cornsilk", background = "darkseagreen") |>
+>>>>>>> 7f3bfb50124923bd04c2ae0a28b9be215634503e
   kable_styling(html_font = "Gill Sans, sans-serif")
 ```
 
