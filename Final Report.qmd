@@ -235,11 +235,7 @@ formatted_table <- kable(table_data, align = "c", col.names = c("Variance Type",
 formatted_table |>
   kable_paper() |>
   kable_styling(bootstrap_options = c("striped", "bordered")) |>
-<<<<<<< HEAD
   column_spec(2, color = "white", background = "darkseagreen") |>
-=======
-  column_spec(2, color = "cornsilk", background = "darkseagreen") |>
->>>>>>> 7f3bfb50124923bd04c2ae0a28b9be215634503e
   kable_styling(html_font = "Gill Sans, sans-serif")
 ```
 
@@ -327,7 +323,6 @@ From our original dataset, we fit a linear model with the explanatory variable "
 
 # References
 
-1.  Yale University News:
-    "Want to Live Longer? Stay in School, Study Suggests." Yale News, 20 Feb. 2020, [**https://news.yale.edu/2020/02/20/want-live-longer-stay-school-study-suggests**](https://news.yale.edu/2020/02/20/want-live-longer-stay-school-study-suggests).
+1.  Yale University News: "Want to Live Longer? Stay in School, Study Suggests." Yale News, 20 Feb. 2020, [**https://news.yale.edu/2020/02/20/want-live-longer-stay-school-study-suggests**](https://news.yale.edu/2020/02/20/want-live-longer-stay-school-study-suggests).
 
 2.  Jim Frost. "How to Interpret the R-squared Value in Regression." Statistics By Jim, [**https://statisticsbyjim.com/regression/interpret-r-squared-regression/**](https://statisticsbyjim.com/regression/interpret-r-squared-regression/).
